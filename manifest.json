@@ -1,0 +1,34 @@
+{
+   "name": "Block Sites",
+   "version": "1.0.0",
+   "manifest_version": 3,
+   "description": "Yet Another Extension to block Websites.",
+   "author": "Luis",
+   "content_scripts": [
+      {
+         "matches": [
+            "*://*/*"
+         ],
+         "js": [
+            "background2.js"
+         ]
+      }
+   ],
+   "permissions": [
+      "tabs",
+      "activeTab"
+   ],
+   "host_permissions": [
+      "http://*.youtube.com/"
+   ],
+   "web_accessible_resources": [
+      {
+         "resources": [
+            "urls.json"
+         ],
+         "matches": [
+            "<all_urls>"
+         ]
+      }
+   ]
+}
