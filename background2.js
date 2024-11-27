@@ -19,22 +19,31 @@ chrome.storage.local.get(['blacklist'], (result) => {
          overlay.style.height = '100%';
          overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
          overlay.style.display = 'flex';
-         overlay.style.flexDirection = 'column';
          overlay.style.justifyContent = 'center';
          overlay.style.alignItems = 'center';
          overlay.style.zIndex = '9999';
-         overlay.style.color = 'white';
 
-         overlay.innerHTML = `
-               <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; color: black;">
-                   <h2>Este sitio está bloqueado</h2>
-                   <h1>Ingrese la contraseña para continuar:</h1>
-                   <input type="password" id="passwordInput" style="padding: 8px; width: 90%; margin-bottom: 20px;" />
-                   <button id="submitPassword" style="padding: 10px 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Aceptar</button>
-               </div>
+         // Modal container style
+         const modal = document.createElement('div');
+         modal.style.backgroundColor = 'white';
+         modal.style.padding = '30px';
+         modal.style.borderRadius = '10px';
+         modal.style.textAlign = 'center';
+         modal.style.color = 'black';
+         modal.style.minWidth = '300px'; // Establece un tamaño mínimo fijo
+         modal.style.maxWidth = '400px'; // Limita el tamaño máximo
+         modal.style.width = '100%'; // Asegura que el modal ocupe todo el ancho posible dentro del rango
+
+         modal.innerHTML = `
+               <h2>Este sitio está bloqueado</h2>
+               <h1>Ingrese la contraseña para continuar:</h1>
+               <input type="password" id="passwordInput" style="padding: 8px; width: 90%; margin-bottom: 20px;" />
+               <button id="submitPassword" style="padding: 10px 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Aceptar</button>
            `;
 
+         overlay.appendChild(modal);
          document.documentElement.appendChild(overlay);
+
          const passwordInput = document.getElementById('passwordInput');
          const submitButton = document.getElementById('submitPassword');
 

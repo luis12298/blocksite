@@ -1,5 +1,6 @@
 const btn = document.getElementById('getUrl');
 const btnExport = document.getElementById('export');
+const btnReset = document.getElementById('reset');
 const mensaje = document.querySelector('.Mensaje');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +14,10 @@ btn.addEventListener('click', () => {
 
 btnExport.addEventListener('click', () => {
    ExportarBlacklist();
+});
+
+btnReset.addEventListener('click', () => {
+   ResetearContraseña();
 });
 // Función para inicializar el estado del botón
 function initializeButton() {
@@ -178,6 +183,40 @@ function ExportarBlacklist() {
          a.download = 'blacklist.txt';
          a.click();
          URL.revokeObjectURL(url);
+      }
+   });
+}
+
+function ResetearContraseña() {
+   chrome.storage.local.get(['password'], (result) => {
+      if (chrome.runtime.lastError) {
+         console.error('Error al acceder al almacenamiento de contraseñas:', chrome.runtime.lastError);
+         return;
+      }
+
+      const storedPassword = result.password;
+
+      if (!storedPassword) {
+         alert('No hay contraseña configurada.');
+         return;
+      }
+
+      const oldPassword = prompt('Ingrese la contraseña actual:');
+      if (oldPassword === storedPassword) {
+         const newPassword = prompt('Ingrese la nueva contraseña:');
+         if (newPassword) {
+            chrome.storage.local.set({ password: newPassword }, () => {
+               if (chrome.runtime.lastError) {
+                  console.error('Error al actualizar la contraseña:', chrome.runtime.lastError);
+               } else {
+                  alert('Contraseña actualizada correctamente.');
+               }
+            });
+         } else {
+            alert('La nueva contraseña no puede estar vacía.');
+         }
+      } else {
+         alert('Contraseña incorrecta.');
       }
    });
 }
