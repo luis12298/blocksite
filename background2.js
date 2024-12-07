@@ -7,40 +7,92 @@ chrome.storage.local.get(['blacklist'], (result) => {
    const blacklist = result.blacklist || []; // Obtén la lista negra o un arreglo vacío si no existe
    const currentUrl = window.location.href.toLowerCase().trim();
 
+   // Verificar si ya está autenticado en esta sesión
+   const isAuthenticated = sessionStorage.getItem('siteAuthenticated_' + currentUrl);
+   if (isAuthenticated) {
+      return; // Si ya está autenticado, no hacer nada
+   }
+
    for (let i = 0; i < blacklist.length; i++) {
       if (currentUrl.includes(blacklist[i].toLowerCase().trim())) {
          document.body.style.display = 'none';
 
          const overlay = document.createElement('div');
-         overlay.style.position = 'fixed';
-         overlay.style.top = '0';
-         overlay.style.left = '0';
-         overlay.style.width = '100%';
-         overlay.style.height = '100%';
-         overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-         overlay.style.display = 'flex';
-         overlay.style.justifyContent = 'center';
-         overlay.style.alignItems = 'center';
-         overlay.style.zIndex = '9999';
+         overlay.style.cssText = `
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         background-color: rgba(0, 0, 0, 0.9);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         z-index: 9999;
+      `;
 
          // Modal container style
          const modal = document.createElement('div');
-         modal.style.backgroundColor = 'white';
-         modal.style.padding = '30px';
-         modal.style.borderRadius = '10px';
-         modal.style.textAlign = 'center';
-         modal.style.color = 'black';
-         modal.style.minWidth = '300px'; // Establece un tamaño mínimo fijo
-         modal.style.maxWidth = '400px'; // Limita el tamaño máximo
-         modal.style.width = '100%'; // Asegura que el modal ocupe todo el ancho posible dentro del rango
+         modal.style.cssText = `
+         background-color: #ffffff;
+         border-radius: 16px;
+         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+         padding: 40px;
+         text-align: center;
+         width: 100%;
+         max-width: 400px;
+         max-height: 80%;
+         overflow: hidden;
+         position: relative;
+         opacity: 0.9;
+         transition: all 0.3s ease;
+      `;
 
          modal.innerHTML = `
-               <h2>Este sitio está bloqueado</h2>
-               <h1>Ingrese la contraseña para continuar:</h1>
-               <input type="password" id="passwordInput" style="padding: 8px; width: 90%; margin-bottom: 20px;" />
-               <button id="submitPassword" style="padding: 10px 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Aceptar</button>
-           `;
-
+      <div style="margin-bottom: 20px;">
+         <h2 style="
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+         ">Este sitio está bloqueado</h2>
+         <p style="
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+         ">Ingrese la contraseña para continuar:</p>
+      </div>
+      <input 
+         type="password" 
+         id="passwordInput" 
+         style="
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+         "
+         placeholder="Contraseña"
+      />
+      <button 
+         id="submitPassword" 
+         style="
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+         "
+      >
+         Aceptar
+      </button>
+   `;
          overlay.appendChild(modal);
          document.documentElement.appendChild(overlay);
 
@@ -74,6 +126,8 @@ chrome.storage.local.get(['blacklist'], (result) => {
                            alert("Error al configurar la contraseña.");
                         } else {
                            alert("Contraseña configurada correctamente.");
+                           // Marcar como autenticado en la sesión
+                           sessionStorage.setItem('siteAuthenticated_' + currentUrl, 'true');
                            document.body.style.display = '';
                            document.documentElement.removeChild(overlay);
                         }
@@ -87,6 +141,8 @@ chrome.storage.local.get(['blacklist'], (result) => {
                   passwordInput.value = "";
                   return;
                } else {
+                  // Marcar como autenticado en la sesión
+                  sessionStorage.setItem('siteAuthenticated_' + currentUrl, 'true');
                   document.body.style.display = '';
                   document.documentElement.removeChild(overlay);
                }
