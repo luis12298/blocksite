@@ -10,7 +10,7 @@
             "*://*/*"
          ],
          "js": [
-            "background2.js"
+            "background.js"
          ]
       }
    ],
