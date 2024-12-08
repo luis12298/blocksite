@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
    initializeButton();
 });
 
-// Evento de clic del botón
+
 btn.addEventListener('click', () => {
    handleUrlToggle();
 });
@@ -31,11 +31,13 @@ function initializeButton() {
          }
 
          const blacklist = result.blacklist || [];
+         mensaje.textContent = "Sitio a bloquear: " + currentUrl;
+
          // Verifica si la URL actual está en la lista negra
          if (blacklist.includes(currentUrl)) {
-            btn.textContent = "Desbloquear URL"; // La URL está bloqueada
+            btn.textContent = "Desbloquear Sitio"; // La URL está bloqueada
          } else {
-            btn.textContent = "Bloquear URL"; // La URL no está bloqueada
+            btn.textContent = "Bloquear Sitio"; // La URL no está bloqueada
          }
       });
    });
@@ -52,8 +54,8 @@ function handleUrlToggle() {
             showError('Error al acceder al almacenamiento');
             return;
          }
-
          const blacklist = result.blacklist || [];
+
          if (blacklist.includes(currentUrl)) {
             // If URL is in blacklist, ask for password to unblock
             askForPassword(() => {
@@ -62,7 +64,7 @@ function handleUrlToggle() {
                   if (chrome.runtime.lastError) {
                      showError('Error al desbloquear la URL');
                   } else {
-                     updateButtonAndMessage("Bloquear URL", "URL desbloqueada correctamente");
+                     updateButtonAndMessage("Bloquear Sitio", "URL desbloqueada correctamente");
                   }
                });
             });
@@ -73,7 +75,7 @@ function handleUrlToggle() {
                if (chrome.runtime.lastError) {
                   showError('Error al guardar la URL');
                } else {
-                  updateButtonAndMessage("Desbloquear URL", "URL bloqueada correctamente");
+                  updateButtonAndMessage("Desbloquear Sitio", "URL bloqueada correctamente");
 
                   // Reload the current tab
                   chrome.tabs.reload(currentTab.id, { bypassCache: true }, () => {
@@ -148,25 +150,7 @@ function VaciarTodosLosDatos() {
    });
 }
 
-function EnviarDatosAlServidor() {
-   chrome.storage.local.get(['blacklist'], (result) => {
-      if (chrome.runtime.lastError) {
-         console.error('Error al acceder al almacenamiento:', chrome.runtime.lastError);
-      } else {
-         const blacklist = result.blacklist || [];
-         fetch('http://localhost:5000/api/blacklist', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ blacklist })
-         })
-            .then(response => response.json())
-            .then(data => console.log('Respuesta del servidor:', data))
-            .catch(error => console.error('Error al enviar los datos:', error));
-      }
-   });
-}
+
 function ExportarBlacklist() {
    chrome.storage.local.get(['blacklist'], (result) => {
       if (chrome.runtime.lastError) {
@@ -220,3 +204,4 @@ function ResetearContraseña() {
       }
    });
 }
+
